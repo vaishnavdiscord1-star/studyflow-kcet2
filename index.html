@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Exam Prep Planner</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f6f3ec; --card:#ffffff; --text:#22201b; --sub:#847d6f; --border:#e6e0d3; --accent:#2b3a67; --gold:#c98a2c;
+  --P:#3b6fb4; --C:#3f8f5e; --M:#c98a2c; --H:#7a5fa8; --E:#7a5fa8; --S:#7a5fa8; --R:#b8901f; --X:#b3492f; --Custom:#6b7280;
+  --Pbg:#eaf1fb; --Cbg:#eaf6ee; --Mbg:#fbf0dd; --Hbg:#f1ecfa; --Ebg:#f1ecfa; --Sbg:#f1ecfa; --Rbg:#faf3dc; --Xbg:#fbe9e2; --Custombg:#eceeec;
+  --font-h:'Fraunces',Georgia,serif; --font-b:'Inter',-apple-system,Segoe UI,Roboto,sans-serif;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#171512; --card:#211e1a; --text:#f1ede3; --sub:#a89e8c; --border:#33302a; --accent:#8fa3d9; --gold:#e0ab5c;
+    --Pbg:#1c2b3f; --Cbg:#1c2e22; --Mbg:#3a2a12; --Hbg:#26203a; --Ebg:#26203a; --Sbg:#26203a; --Rbg:#332813; --Xbg:#3a1e1c; --Custombg:#26241f;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#171512; --card:#211e1a; --text:#f1ede3; --sub:#a89e8c; --border:#33302a; --accent:#8fa3d9; --gold:#e0ab5c;
+  --Pbg:#1c2b3f; --Cbg:#1c2e22; --Mbg:#3a2a12; --Hbg:#26203a; --Ebg:#26203a; --Sbg:#26203a; --Rbg:#332813; --Xbg:#3a1e1c; --Custombg:#26241f;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px);}
+*{box-sizing:border-box;}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font-b);min-height:100%;}
+.wrap{max-width:640px;margin:0 auto;padding:16px 16px 90px;}
+.headrow{display:flex;align-items:center;gap:14px;margin-bottom:10px;}
+.ring .pct{font-family:var(--font-h);font-size:15px;font-weight:700;fill:var(--text);}
+h1{font-family:var(--font-h);font-weight:700;font-size:22px;margin:0;letter-spacing:-.01em;}
+.sub{color:var(--sub);font-size:12.5px;margin-top:2px;}
+.banner{background:var(--Xbg);color:var(--X);font-size:12.5px;font-weight:600;padding:8px 11px;border-radius:10px;margin-bottom:10px;border-left:3px solid var(--X);}
+.navbar{position:sticky;top:0;background:var(--bg);padding-top:calc(8px + env(safe-area-inset-top,0px));padding-bottom:6px;z-index:5;border-bottom:1px solid var(--border);}
+.tabs{display:flex;gap:6px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+.tabs::-webkit-scrollbar{display:none;}
+.tab{flex:0 0 auto;text-align:center;padding:8px 13px;border-radius:20px;font-size:12.5px;font-weight:600;background:var(--card);color:var(--sub);border:1px solid var(--border);cursor:pointer;white-space:nowrap;}
+.tab.active{background:var(--accent);color:#fff;border-color:var(--accent);}
+.daynav{display:flex;align-items:center;justify-content:space-between;margin:14px 0 10px;gap:8px;}
+.daynav button{background:var(--card);border:1px solid var(--border);color:var(--text);width:36px;height:36px;border-radius:10px;font-size:16px;cursor:pointer;}
+.daylabel{flex:1;text-align:center;}
+.daylabel .d1{font-family:var(--font-h);font-weight:700;font-size:16px;}
+.daylabel .d2{font-size:11.5px;color:var(--sub);}
+.badge{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:700;margin-top:3px;}
+.badge.exam{background:var(--Xbg);color:var(--X);}
+.progressbar{height:6px;border-radius:5px;background:var(--border);overflow:hidden;margin:8px 0 16px;}
+.progressbar>div{height:100%;background:var(--gold);}
+.card{background:var(--card);border:1px solid var(--border);border-left:4px solid var(--border);border-radius:10px;padding:11px 13px;margin-bottom:9px;display:flex;gap:10px;align-items:flex-start;}
+.card.done{opacity:.5;}
+.card input[type=checkbox]{width:19px;height:19px;margin-top:2px;flex-shrink:0;accent-color:var(--accent);}
+.card .body{flex:1;min-width:0;}
+.card .time{font-size:11px;color:var(--sub);font-weight:600;}
+.card .txt{font-size:14px;line-height:1.4;margin-top:2px;}
+.card.done .txt{text-decoration:line-through;}
+.tag{display:inline-block;font-size:10.5px;font-weight:700;padding:1px 7px;border-radius:6px;margin-top:5px;margin-right:5px;}
+.section-h{font-family:var(--font-h);font-size:15px;font-weight:600;color:var(--text);margin:20px 0 9px;}
+.origin{font-size:11px;color:var(--sub);margin-top:2px;}
+.empty{color:var(--sub);font-size:13.5px;padding:22px 4px;text-align:center;background:var(--card);border:1px dashed var(--border);border-radius:12px;}
+.statgrid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:16px;}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:13px;text-align:center;}
+.stat .n{font-family:var(--font-h);font-size:23px;font-weight:700;color:var(--accent);}
+.stat .l{font-size:11px;color:var(--sub);margin-top:2px;}
+.week{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:13px;margin-bottom:10px;}
+.week h3{font-family:var(--font-h);margin:0 0 9px;font-size:14.5px;font-weight:600;}
+.wrow{display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:12.5px;}
+.wrow .lbl{width:72px;flex-shrink:0;color:var(--sub);}
+.wrow .bar{flex:1;height:7px;background:var(--border);border-radius:5px;overflow:hidden;}
+.wrow .bar>div{height:100%;}
+.wrow .pct{width:38px;text-align:right;flex-shrink:0;color:var(--sub);}
+.iconbtn{background:none;border:1px solid var(--border);border-radius:8px;width:28px;height:28px;font-size:13px;color:var(--sub);cursor:pointer;flex-shrink:0;}
+.form{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:13px;margin-bottom:14px;}
+.form input,.form select,.form textarea{width:100%;padding:9px;margin-bottom:8px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:13.5px;font-family:inherit;}
+.form textarea{resize:vertical;min-height:36px;}
+.btn{background:var(--accent);color:#fff;border:none;padding:10px;border-radius:8px;font-size:13.5px;font-weight:700;width:100%;cursor:pointer;}
+.btn.ghost{background:none;color:var(--accent);border:1px solid var(--accent);}
+.addrow{display:flex;gap:7px;margin-bottom:10px;}
+.addrow input,.addrow select{flex:1;padding:9px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:13.5px;}
+.entrycard{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:11px 13px;margin-bottom:9px;}
+.entrycard .row{font-size:13px;margin-top:3px;}
+.entrycard .lbl2{color:var(--sub);font-weight:600;}
+.entrycard .top{display:flex;justify-content:space-between;align-items:center;}
+.spark{display:block;margin-top:6px;}
+.trend{font-size:12px;color:var(--sub);margin-top:2px;}
+.chaprow{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 13px;margin-bottom:7px;}
+.chaprow .cn{flex:1;font-size:13.5px;}
+.chaprow .st{font-size:10.5px;font-weight:700;padding:1px 7px;border-radius:6px;}
+.card.now{border-left-color:var(--gold);box-shadow:0 0 0 1px var(--gold) inset;}
+.nowtag{background:var(--gold);color:#fff;font-size:9.5px;font-weight:700;padding:1px 6px;border-radius:6px;margin-left:5px;}
+.chip{display:inline-flex;align-items:center;gap:5px;background:var(--card);border:1px solid var(--border);border-radius:20px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;margin-bottom:10px;color:var(--sub);}
+.chip.on{background:var(--gold);color:#fff;border-color:var(--gold);}
+.hiddencount{font-size:12px;color:var(--sub);text-align:center;padding:6px 0;}
+.recap{background:var(--card);border:1px solid var(--border);border-left:4px solid var(--gold);border-radius:10px;padding:13px;margin-bottom:14px;font-size:13px;line-height:1.5;}
+.timerbar{position:fixed;left:0;right:0;bottom:0;display:none;align-items:center;gap:10px;background:var(--accent);color:#fff;
+  padding:10px 14px calc(10px + env(safe-area-inset-bottom,0px));font-size:13px;font-weight:600;z-index:20;}
+.timerbar span{flex:1;}
+.timerbar button{background:rgba(255,255,255,.2);border:none;color:#fff;width:30px;height:30px;border-radius:8px;font-size:13px;cursor:pointer;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="headrow">
+    <svg class="ring" width="52" height="52" viewBox="0 0 52 52" id="hero-ring">
+      <circle cx="26" cy="26" r="22" fill="none" stroke="var(--border)" stroke-width="5"/>
+      <circle id="hero-ring-fg" cx="26" cy="26" r="22" fill="none" stroke="var(--gold)" stroke-width="5" stroke-linecap="round" stroke-dasharray="138" stroke-dashoffset="138" transform="rotate(-90 26 26)"/>
+      <text x="26" y="30" text-anchor="middle" class="pct" id="hero-ring-txt">0%</text>
+    </svg>
+    <div>
+      <h1>Exam Prep Planner</h1>
+      <div class="sub">26 Sep – 12 Oct 2026 · saves automatically on this device</div>
+    </div>
+  </div>
+  <div id="banner"></div>
+  <div class="navbar">
+    <div class="tabs">
+      <div class="tab active" data-tab="today">📅 Today</div>
+      <div class="tab" data-tab="backlog">🗂 Backlog</div>
+      <div class="tab" data-tab="mistakes">❗ Mistakes</div>
+      <div class="tab" data-tab="scores">📊 Scores</div>
+      <div class="tab" data-tab="chapters">📘 Chapters</div>
+      <div class="tab" data-tab="notes">📝 Notes</div>
+      <div class="tab" data-tab="progress">📈 Progress</div>
+    </div>
+  </div>
+  <div id="view"></div>
+</div>
+<div class="timerbar" id="timerbar"></div>
+<script>
+const DATA = [{"iso":"2026-09-26","lbl":"Sat, 26 Sep 2026","dt":"College Day","ex":null,"tk":[{"t":"6:30PM-7:20PM","c":"C","x":"Chemistry \u2014 Structure of Atom (theory, notes)","m":50},{"t":"7:30PM-8:20PM","c":"P","x":"Physics \u2014 Motion in a Straight Line (theory + examples)","m":50},{"t":"9:00PM-9:45PM","c":"H","x":"Hindi \u2014 syllabus revision (exam Mon)","m":45},{"t":"9:55PM-10:40PM","c":"R","x":"Mistake log update + Maths quick recall (Sets, Rel. & Fn.)","m":45}]},{"iso":"2026-09-27","lbl":"Sun, 27 Sep 2026","dt":"Sunday","ex":null,"tk":[{"t":"8:30AM-9:15AM","c":"C","x":"Chemistry \u2014 Structure of Atom, continue + practice Qs","m":45},{"t":"9:25AM-10:10AM","c":"P","x":"Physics \u2014 Motion in a Straight Line, KCET practice Qs","m":45},{"t":"10:30AM-11:15AM","c":"H","x":"Hindi \u2014 full exam prep (paper pattern + practice)","m":45},{"t":"3:00PM-3:45PM","c":"E","x":"English \u2014 light prep start (exam in 3 days)","m":45},{"t":"4:00PM-4:45PM","c":"M","x":"Maths \u2014 Trigonometry, theory (incomplete)","m":45},{"t":"6:30PM-7:15PM","c":"R","x":"Mistake log + backlog check","m":45}]},{"iso":"2026-09-28","lbl":"Mon, 28 Sep 2026","dt":"Exam Half-Day","ex":"HINDI","tk":[{"t":"8:30AM-1:00PM","c":"X","x":"COLLEGE \u2014 HINDI EXAM (half day)","m":270},{"t":"3:00PM-3:45PM","c":"E","x":"English \u2014 exam prep: grammar / writing / comprehension","m":45},{"t":"3:55PM-4:40PM","c":"E","x":"English \u2014 practice paper","m":45},{"t":"5:00PM-5:45PM","c":"P","x":"Physics \u2014 Motion in a Plane, theory (incomplete)","m":45},{"t":"5:45PM-6:30PM","c":"C","x":"Chemistry \u2014 Basic Organic Chemistry, theory (hardest \u2014 start early)","m":45},{"t":"6:45PM-7:30PM","c":"M","x":"Maths \u2014 Trigonometry, practice Qs","m":45},{"t":"9:00PM-9:45PM","c":"R","x":"Mistake log update","m":45}]},{"iso":"2026-09-29","lbl":"Tue, 29 Sep 2026","dt":"Holiday","ex":null,"tk":[{"t":"8:30AM-9:15AM","c":"E","x":"English \u2014 final revision + sample papers (priority, exam tomorrow)","m":45},{"t":"9:25AM-10:10AM","c":"E","x":"English \u2014 practice writing / comprehension","m":45},{"t":"10:20AM-11:05AM","c":"C","x":"Chemistry \u2014 Basic Organic Chemistry, continue theory (depth)","m":45},{"t":"11:30AM-12:15PM","c":"P","x":"Physics \u2014 Motion in a Plane, practice Qs (KCET PYQs)","m":45},{"t":"2:00PM-2:45PM","c":"M","x":"Maths \u2014 Complex Numbers, theory (incomplete)","m":45},{"t":"2:55PM-3:40PM","c":"C","x":"Chemistry \u2014 Organic, practice questions","m":45},{"t":"4:00PM-4:45PM","c":"R","x":"Mistake log + backlog review","m":45}]},{"iso":"2026-09-30","lbl":"Wed, 30 Sep 2026","dt":"Exam Half-Day","ex":"ENGLISH","tk":[{"t":"8:30AM-1:00PM","c":"X","x":"COLLEGE \u2014 ENGLISH EXAM (half day)","m":270},{"t":"3:00PM-3:45PM","c":"P","x":"Physics \u2014 Units & Measurements, quick revision (completed)","m":45},{"t":"3:55PM-4:40PM","c":"P","x":"Physics \u2014 Laws of Motion, quick revision (completed)","m":45},{"t":"5:00PM-5:45PM","c":"P","x":"Physics \u2014 Work, Energy & Power, theory (incomplete)","m":45},{"t":"5:45PM-6:30PM","c":"P","x":"Physics \u2014 Work, Energy & Power, worked examples","m":45},{"t":"6:45PM-7:30PM","c":"C","x":"Chemistry \u2014 Structure of Atom, practice Qs (consolidate)","m":45},{"t":"9:00PM-9:45PM","c":"R","x":"Mistake log + Physics formula sheet","m":45}]},{"iso":"2026-10-01","lbl":"Thu, 1 Oct 2026","dt":"Holiday","ex":null,"tk":[{"t":"8:30AM-9:15AM","c":"P","x":"Physics \u2014 System of Particles & Rotational Motion, theory","m":45},{"t":"9:25AM-10:10AM","c":"P","x":"Physics \u2014 System of Particles & Rotational Motion, worked examples","m":45},{"t":"10:20AM-11:05AM","c":"P","x":"Physics \u2014 mixed KCET PYQs (all 6 chapters)","m":45},{"t":"11:30AM-12:15PM","c":"P","x":"Physics \u2014 H.C. Verma selected problems (harder concepts)","m":45},{"t":"2:00PM-2:45PM","c":"C","x":"Chemistry \u2014 Periodicity, theory (incomplete)","m":45},{"t":"2:55PM-3:40PM","c":"M","x":"Maths \u2014 Permutations & Combinations, theory (incomplete)","m":45},{"t":"4:00PM-4:45PM","c":"R","x":"Mistake log / backlog review","m":45}]},{"iso":"2026-10-02","lbl":"Fri, 2 Oct 2026","dt":"Holiday","ex":null,"tk":[{"t":"8:30AM-9:15AM","c":"P","x":"Physics \u2014 full syllabus revision (all 6 ch: notes + formula sheet)","m":45},{"t":"9:25AM-10:10AM","c":"P","x":"Physics \u2014 mistake notebook review (all logged mistakes)","m":45},{"t":"10:20AM-11:05AM","c":"P","x":"Physics \u2014 timed practice test (KCET-style, 60Q / 75 min)","m":45},{"t":"11:30AM-12:15PM","c":"P","x":"Physics \u2014 test analysis: errors, weak points, speed/accuracy","m":45},{"t":"2:00PM-2:45PM","c":"C","x":"Chemistry \u2014 Chemical Bonding, theory (last new chapter)","m":45},{"t":"2:55PM-3:40PM","c":"M","x":"Maths \u2014 Straight Lines, theory (incomplete)","m":45},{"t":"4:00PM-4:45PM","c":"R","x":"Light wind-down revision \u2014 Physics weak spots only (exam tomorrow, no new material)","m":45}]},{"iso":"2026-10-03","lbl":"Sat, 3 Oct 2026","dt":"Exam Half-Day","ex":"PHYSICS","tk":[{"t":"8:30AM-1:00PM","c":"X","x":"COLLEGE \u2014 PHYSICS EXAM (half day)","m":270},{"t":"3:00PM-3:45PM","c":"C","x":"Chemistry \u2014 Basic Organic Chemistry, practice Qs (consolidate)","m":45},{"t":"3:55PM-4:40PM","c":"C","x":"Chemistry \u2014 Structure of Atom, practice Qs","m":45},{"t":"5:00PM-5:45PM","c":"C","x":"Chemistry \u2014 Periodicity, practice Qs","m":45},{"t":"5:45PM-6:30PM","c":"C","x":"Chemistry \u2014 Chemical Bonding, worked examples","m":45},{"t":"6:45PM-7:30PM","c":"M","x":"Maths \u2014 Permutations & Combinations, practice Qs","m":45},{"t":"9:00PM-9:45PM","c":"R","x":"Mistake log + start Chemistry formula/reaction sheet","m":45}]},{"iso":"2026-10-04","lbl":"Sun, 4 Oct 2026","dt":"Sunday","ex":null,"tk":[{"t":"8:30AM-9:15AM","c":"C","x":"Chemistry \u2014 full syllabus revision (all 5 ch: notes, reactions, formulas)","m":45},{"t":"9:25AM-10:10AM","c":"C","x":"Chemistry \u2014 mistake notebook review (all Chem mistakes)","m":45},{"t":"10:30AM-11:15AM","c":"C","x":"Chemistry \u2014 timed practice test (KCET-style, 60Q / 75 min)","m":45},{"t":"3:00PM-3:45PM","c":"C","x":"Chemistry \u2014 test analysis: weak points, esp. Organic","m":45},{"t":"4:00PM-4:45PM","c":"M","x":"Maths \u2014 Straight Lines, practice Qs","m":45},{"t":"6:30PM-7:15PM","c":"P","x":"Physics \u2014 maintenance revision (old chapters, light)","m":45}]},{"iso":"2026-10-05","lbl":"Mon, 5 Oct 2026","dt":"Exam Half-Day","ex":"CHEMISTRY","tk":[{"t":"8:30AM-1:00PM","c":"X","x":"COLLEGE \u2014 CHEMISTRY EXAM (half day)","m":270},{"t":"3:00PM-3:45PM","c":"M","x":"Maths \u2014 Complex Numbers, practice Qs (consolidate)","m":45},{"t":"3:55PM-4:40PM","c":"M","x":"Maths \u2014 Permutations & Combinations, practice Qs","m":45},{"t":"5:00PM-5:45PM","c":"M","x":"Maths \u2014 Straight Lines, practice Qs","m":45},{"t":"5:45PM-6:30PM","c":"M","x":"Maths \u2014 Trigonometry, practice Qs (focus: how to start problems)","m":45},{"t":"6:45PM-7:30PM","c":"P","x":"Physics \u2014 maintenance revision (mixed old chapters)","m":45},{"t":"9:00PM-9:45PM","c":"R","x":"Mistake log update","m":45}]},{"iso":"2026-10-06","lbl":"Tue, 6 Oct 2026","dt":"Holiday","ex":null,"tk":[{"t":"8:30AM-9:15AM","c":"M","x":"Maths \u2014 full syllabus revision (all 7 chapters)","m":45},{"t":"9:25AM-10:10AM","c":"M","x":"Maths \u2014 mistake notebook review + \"how to start\" pattern practice","m":45},{"t":"10:20AM-11:05AM","c":"M","x":"Maths \u2014 timed practice test (KCET-style, 60Q / 75 min)","m":45},{"t":"11:30AM-12:15PM","c":"M","x":"Maths \u2014 test analysis: weak points, speed/accuracy","m":45},{"t":"2:00PM-2:45PM","c":"C","x":"Chemistry \u2014 maintenance revision (formulas / reactions)","m":45},{"t":"2:55PM-3:40PM","c":"P","x":"Physics \u2014 maintenance revision (formula sheet)","m":45},{"t":"4:00PM-4:45PM","c":"R","x":"Mistake log / backlog review (exam tomorrow, keep it light)","m":45}]},{"iso":"2026-10-07","lbl":"Wed, 7 Oct 2026","dt":"Exam Half-Day","ex":"MATHS","tk":[{"t":"8:30AM-1:00PM","c":"X","x":"COLLEGE \u2014 MATHS EXAM (half day)","m":270},{"t":"3:00PM-3:45PM","c":"S","x":"Computer Science \u2014 exam prep: syllabus revision + practice (heavy)","m":45},{"t":"3:55PM-4:40PM","c":"S","x":"Computer Science \u2014 practice / theory","m":45},{"t":"5:00PM-5:45PM","c":"P","x":"Physics \u2014 mixed KCET PYQs (all 6 ch, maintain sharpness)","m":45},{"t":"5:45PM-6:30PM","c":"C","x":"Chemistry \u2014 mixed KCET PYQs (all 5 ch)","m":45},{"t":"6:45PM-7:30PM","c":"R","x":"Mistake log update","m":45},{"t":"9:00PM-9:45PM","c":"S","x":"Computer Science \u2014 extra revision pass","m":45}]},{"iso":"2026-10-08","lbl":"Thu, 8 Oct 2026","dt":"Holiday","ex":null,"tk":[{"t":"8:30AM-9:15AM","c":"S","x":"Computer Science \u2014 final revision + practice papers (priority)","m":45},{"t":"9:25AM-10:10AM","c":"S","x":"Computer Science \u2014 practice / theory continued","m":45},{"t":"10:20AM-11:05AM","c":"P","x":"Physics \u2014 mixed PCM timed mock (all 6 ch, 60Q / 75 min)","m":45},{"t":"11:30AM-12:15PM","c":"C","x":"Chemistry \u2014 mixed PCM timed mock (all 5 ch, 60Q / 75 min)","m":45},{"t":"2:00PM-2:45PM","c":"M","x":"Maths \u2014 mixed PCM timed mock (all 7 ch, 60Q / 75 min)","m":45},{"t":"2:55PM-3:40PM","c":"R","x":"Mistake log \u2014 cross-subject error pattern review (exam tomorrow, keep it light)","m":45},{"t":"6:15PM-7:00PM","c":"R","x":"Mistake log / final review","m":45}]},{"iso":"2026-10-09","lbl":"Fri, 9 Oct 2026","dt":"Exam Half-Day","ex":"COMPUTER SCIENCE","tk":[{"t":"8:30AM-1:00PM","c":"X","x":"COLLEGE \u2014 COMPUTER SCIENCE EXAM (half day)","m":270},{"t":"3:00PM-3:45PM","c":"P","x":"Physics \u2014 full KCET-style timed test (60Q / 75 min)","m":45},{"t":"3:55PM-4:40PM","c":"P","x":"Physics \u2014 test analysis","m":45},{"t":"5:00PM-5:45PM","c":"C","x":"Chemistry \u2014 full KCET-style timed test (60Q / 75 min)","m":45},{"t":"5:45PM-6:30PM","c":"C","x":"Chemistry \u2014 test analysis","m":45},{"t":"6:45PM-7:30PM","c":"R","x":"Mistake log consolidation (top weak areas, all PCM)","m":45}]},{"iso":"2026-10-10","lbl":"Sat, 10 Oct 2026","dt":"Holiday","ex":null,"tk":[{"t":"8:30AM-9:15AM","c":"M","x":"Maths \u2014 full KCET-style timed test (60Q / 75 min)","m":45},{"t":"9:25AM-10:10AM","c":"M","x":"Maths \u2014 test analysis","m":45},{"t":"10:20AM-11:05AM","c":"P","x":"Physics \u2014 weak-area drilling (from Fri's analysis)","m":45},{"t":"11:30AM-12:15PM","c":"C","x":"Chemistry \u2014 weak-area drilling (esp. Organic)","m":45},{"t":"2:00PM-2:45PM","c":"M","x":"Maths \u2014 weak-area drilling (\"how to start\" problems)","m":45},{"t":"2:55PM-3:40PM","c":"R","x":"Formula / reaction sheet \u2014 final revision pass (all 3 subjects)","m":45},{"t":"4:00PM-4:45PM","c":"R","x":"Mistake log \u2014 final pass, review one-line takeaways","m":45}]},{"iso":"2026-10-11","lbl":"Sun, 11 Oct 2026","dt":"Sunday (Light \u2014 Test Tomorrow)","ex":null,"tk":[{"t":"8:30AM-9:15AM","c":"P","x":"Physics \u2014 formula sheet + quick chapter recall (all 6 ch)","m":45},{"t":"9:30AM-10:15AM","c":"C","x":"Chemistry \u2014 formula/reaction sheet + quick recall (all 5 ch)","m":45},{"t":"10:30AM-11:15AM","c":"M","x":"Maths \u2014 formula sheet + quick recall (all 7 ch)","m":45},{"t":"2:00PM-3:00PM","c":"R","x":"Light mixed practice \u2014 easy/medium PYQs only (confidence-building, no new material)","m":60},{"t":"4:00PM-4:30PM","c":"R","x":"Review test-day strategy: Round 1 easy \u2192 Round 2 medium \u2192 Round 3 hard/remaining; no negative marking, attempt everything after checking","m":30}]},{"iso":"2026-10-12","lbl":"Mon, 12 Oct 2026","dt":"KCET TEST DAY","ex":"KCET TEST (Physics, Chemistry, Maths)","tk":[{"t":"8:30AM-12:00PM","c":"X","x":"KCET TEST \u2014 Physics, Chemistry, Maths (60 MCQ / 75 min each)","m":210},{"t":"3:00PM-4:00PM","c":"R","x":"Log scores in Test Scores Tracker + jot quick self-notes (no deep analysis yet)","m":60}]}]
+;
+const CHAPTERS = [{"s":"P","sn":"Physics","n":"Units & Measurements","st":"Completed"},{"s":"P","sn":"Physics","n":"Motion in a Straight Line","st":"Incomplete"},{"s":"P","sn":"Physics","n":"Motion in a Plane","st":"Incomplete"},{"s":"P","sn":"Physics","n":"Laws of Motion","st":"Completed"},{"s":"P","sn":"Physics","n":"Work, Energy & Power","st":"Incomplete"},{"s":"P","sn":"Physics","n":"System of Particles & Rotational Motion","st":"Incomplete"},{"s":"C","sn":"Chemistry","n":"Basic Concepts of Chemistry","st":"Completed"},{"s":"C","sn":"Chemistry","n":"Basic Organic Chemistry","st":"Incomplete"},{"s":"C","sn":"Chemistry","n":"Structure of Atom","st":"Incomplete"},{"s":"C","sn":"Chemistry","n":"Periodicity","st":"Incomplete"},{"s":"C","sn":"Chemistry","n":"Chemical Bonding","st":"Incomplete"},{"s":"M","sn":"Maths","n":"Sets","st":"Completed"},{"s":"M","sn":"Maths","n":"Relations & Functions","st":"Completed"},{"s":"M","sn":"Maths","n":"Trigonometry","st":"Incomplete"},{"s":"M","sn":"Maths","n":"Complex Numbers","st":"Incomplete"},{"s":"M","sn":"Maths","n":"Linear Inequality","st":"Completed"},{"s":"M","sn":"Maths","n":"Permutations & Combinations","st":"Incomplete"},{"s":"M","sn":"Maths","n":"Straight Lines","st":"Incomplete"}]
+;
+const NAMES = {P:'Physics',C:'Chemistry',M:'Maths',H:'Hindi',E:'English',S:'Computer Science',R:'Revision',X:'Exam/Test',Custom:'Custom'};
+const WEEKS = [[0,6,'Week 1 · 26 Sep–2 Oct'],[7,13,'Week 2 · 3–9 Oct'],[14,16,'Week 3 · 10–12 Oct']];
+
+function ls(k,def){ try{ const v = JSON.parse(localStorage.getItem(k)); return v===null||v===undefined?def:v; }catch(e){ return def; } }
+function lsSet(k,v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
+
+let doneStore = ls('sp_done', {});
+let customStore = ls('sp_custom', {});
+let reflectStore = ls('sp_reflect', {});
+let mistakeStore = ls('sp_mistakes', []);
+let scoreStore = ls('sp_scores', []);
+let chapterStore = ls('sp_chapters', {});
+let lowEnergyStore = ls('sp_lowenergy', {});
+let notesStore = ls('sp_notes', {Physics:'',Chemistry:'',Maths:''});
+
+function parseT(str){ // "6:30PM-7:20PM" -> [startMin,endMin]
+  const m = str.match(/^(\d+):(\d+)(AM|PM)-(\d+):(\d+)(AM|PM)$/);
+  if(!m) return null;
+  const toMin=(h,mi,ap)=>{ h=+h; if(ap==='PM'&&h!==12)h+=12; if(ap==='AM'&&h===12)h=0; return h*60+ +mi; };
+  return [toMin(m[1],m[2],m[3]), toMin(m[4],m[5],m[6])];
+}
+function nowMin(){ const d=new Date(); return d.getHours()*60+d.getMinutes(); }
+
+function key(di,ti){ return di+'_'+ti; }
+function isDone(di,ti){ return !!doneStore[key(di,ti)]; }
+function toggle(di,ti){ const k=key(di,ti); if(doneStore[k]) delete doneStore[k]; else doneStore[k]=true; lsSet('sp_done',doneStore); render(); }
+function toggleLowEnergy(iso){ lowEnergyStore[iso]=!lowEnergyStore[iso]; lsSet('sp_lowenergy',lowEnergyStore); render(); }
+function toggleCustom(iso,id){ (customStore[iso]||[]).forEach(t=>{ if(t.id===id) t.done=!t.done; }); lsSet('sp_custom',customStore); render(); }
+function deleteCustom(iso,id){ customStore[iso] = (customStore[iso]||[]).filter(t=>t.id!==id); lsSet('sp_custom',customStore); render(); }
+function addCustom(iso){
+  const inp = document.getElementById('addtask_'+iso);
+  const text = inp.value.trim();
+  if(!text) return;
+  customStore[iso] = customStore[iso]||[];
+  customStore[iso].push({id:Date.now(), text, done:false});
+  lsSet('sp_custom',customStore); inp.value=''; render();
+}
+
+function todayIso(){ const d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function findTodayIndex(){ const t=todayIso(); let idx=DATA.findIndex(d=>d.iso===t); if(idx===-1) idx = t<DATA[0].iso?0:DATA.length-1; return idx; }
+const CURRENT = findTodayIndex();
+let viewIdx = CURRENT;
+let tab = 'today';
+
+function dayComplete(di){
+  const d = DATA[di];
+  const custom = customStore[d.iso]||[];
+  const all = d.tk.length + custom.length;
+  if(!all) return false;
+  const fixedDone = d.tk.every((t,ti)=>isDone(di,ti));
+  const customDone = custom.every(t=>t.done);
+  return fixedDone && customDone;
+}
+
+function renderBanner(){
+  let next = null;
+  for(let i=CURRENT;i<DATA.length;i++){ if(DATA[i].ex){ next = DATA[i]; break; } }
+  const el = document.getElementById('banner');
+  if(!next){ el.innerHTML=''; return; }
+  const days = Math.round((new Date(next.iso) - new Date(todayIso()))/86400000);
+  const when = days<=0 ? 'today' : days===1 ? 'tomorrow' : `in ${days} days`;
+  el.innerHTML = `<div class="banner">📌 Next: ${next.ex} — ${when} (${next.lbl})</div>`;
+}
+
+function taskCard(di,ti,t,originLbl,isNow){
+  const done = isDone(di,ti);
+  const lbl = (NAMES[t.c]+': '+t.x).replace(/'/g,"\\'").slice(0,50);
+  return `<div class="card ${done?'done':''} ${isNow?'now':''}">
+    <input type="checkbox" ${done?'checked':''} onchange="toggle(${di},${ti})">
+    <div class="body">
+      <div class="time">${t.t} ${isNow?'<span class="nowtag">NOW</span>':''}</div>
+      <div class="txt">${t.x}</div>
+      <span class="tag" style="background:var(--${t.c}bg);color:var(--${t.c})">${NAMES[t.c]}</span>
+      ${originLbl?`<div class="origin">from ${originLbl}</div>`:''}
+    </div>
+    <button class="iconbtn" title="Focus timer" onclick="startTimer('${lbl}', ${t.m||30},'single')">⏱</button>
+    <button class="iconbtn" title="Pomodoro (25/5)" onclick="startTimer('${lbl}', 25,'pomodoro')">🍅</button>
+  </div>`;
+}
+function customCard(iso,t){
+  return `<div class="card ${t.done?'done':''}">
+    <input type="checkbox" ${t.done?'checked':''} onchange="toggleCustom('${iso}',${t.id})">
+    <div class="body">
+      <div class="time">custom task</div>
+      <div class="txt">${t.text}</div>
+      <span class="tag" style="background:var(--Custombg);color:var(--Custom)">Custom</span>
+    </div>
+    <button class="iconbtn" onclick="deleteCustom('${iso}',${t.id})">✕</button>
+  </div>`;
+}
+
+function backlogItems(){
+  const items = [];
+  for(let di=0; di<CURRENT; di++){
+    DATA[di].tk.forEach((t,ti)=>{ if(!isDone(di,ti)) items.push({type:'fixed',di,ti,t,lbl:DATA[di].lbl}); });
+    (customStore[DATA[di].iso]||[]).forEach(t=>{ if(!t.done) items.push({type:'custom',iso:DATA[di].iso,t,lbl:DATA[di].lbl}); });
+  }
+  return items;
+}
+
+function renderToday(){
+  const d = DATA[viewIdx];
+  const custom = customStore[d.iso]||[];
+  const total = d.tk.length + custom.length;
+  const done = d.tk.filter((t,ti)=>isDone(viewIdx,ti)).length + custom.filter(t=>t.done).length;
+  const pct = total? Math.round(done/total*100):0;
+  let html = `<div class="daynav">
+    <button onclick="viewIdx=Math.max(0,viewIdx-1);render()">‹</button>
+    <div class="daylabel"><div class="d1">${d.lbl}</div><div class="d2">${d.dt}</div>
+      ${d.ex?`<div class="badge exam">EXAM: ${d.ex}</div>`:''}
+    </div>
+    <button onclick="viewIdx=Math.min(${DATA.length-1},viewIdx+1);render()">›</button>
+  </div>
+  ${viewIdx!==CURRENT?`<div class="sub" style="text-align:center;margin-bottom:8px;">viewing ${viewIdx<CURRENT?'a past':'a future'} day — <a href="#" onclick="viewIdx=${CURRENT};render();return false;">jump to today</a></div>`:''}
+  <div class="progressbar"><div style="width:${pct}%"></div></div>`;
+
+  if(viewIdx===CURRENT){
+    const bl = backlogItems();
+    if(bl.length){
+      html += `<div class="section-h">Backlog from earlier days (${bl.length})</div>`;
+      bl.forEach(b=> html += b.type==='fixed' ? taskCard(b.di,b.ti,b.t,b.lbl) : customCard(b.iso,b.t));
+    }
+  }
+  html += `<div class="section-h">Today's Plan</div>`;
+  html += `<div class="addrow"><input id="addtask_${d.iso}" placeholder="Add your own task..." onkeydown="if(event.key==='Enter')addCustom('${d.iso}')"><button class="iconbtn" style="width:auto;padding:0 12px;" onclick="addCustom('${d.iso}')">Add</button></div>`;
+  const lowE = !!lowEnergyStore[d.iso];
+  html += `<div class="chip ${lowE?'on':''}" onclick="toggleLowEnergy('${d.iso}')">😴 Low-energy day${lowE?' (list trimmed)':''}</div>`;
+  if(!total){ html += `<div class="empty">No study blocks logged for this day — enjoy the test / rest day.</div>`; }
+  const showNow = viewIdx===CURRENT && d.iso===todayIso();
+  const nm = showNow ? nowMin() : -1;
+  const essentialTi = new Set(d.tk.map((t,ti)=>ti).filter(ti=> d.tk[ti].c==='X').concat([0,1]));
+  let hidden = 0;
+  d.tk.forEach((t,ti)=>{
+    if(lowE && !essentialTi.has(ti) && !isDone(viewIdx,ti)){ hidden++; return; }
+    const rng = parseT(t.t);
+    const isNow = showNow && rng && nm>=rng[0] && nm<rng[1];
+    html += taskCard(viewIdx,ti,t,null,isNow);
+  });
+  if(hidden) html += `<div class="hiddencount">+${hidden} more task${hidden>1?'s':''} hidden for today (low-energy mode)</div>`;
+  custom.forEach(t=> html += customCard(d.iso,t));
+  html += `<div class="section-h">Reflection</div>
+    <div class="form"><textarea id="reflect_${d.iso}" placeholder="What went well / what didn't today?">${(reflectStore[d.iso]||'')}</textarea></div>`;
+  document.getElementById('view').innerHTML = html;
+  document.getElementById('reflect_'+d.iso).addEventListener('change', e=>{ reflectStore[d.iso]=e.target.value; lsSet('sp_reflect',reflectStore); });
+}
+
+function renderBacklog(){
+  const bl = backlogItems();
+  let html = `<div class="section-h">Pending from Earlier Days</div>`;
+  if(!bl.length){ html += `<div class="empty">Nothing pending — you're fully caught up.</div>`; }
+  bl.forEach(b=> html += b.type==='fixed' ? taskCard(b.di,b.ti,b.t,b.lbl) : customCard(b.iso,b.t));
+  document.getElementById('view').innerHTML = html;
+}
+
+const SUBJS = ['Physics','Chemistry','Maths','Hindi','English','Computer Science','Other'];
+let mistakeFilter = 'All', mistakeSearch = '';
+function renderMistakes(){
+  let html = `<div class="section-h">Log a Mistake</div>
+  <div class="form">
+    <select id="m_subj">${SUBJS.map(s=>`<option>${s}</option>`).join('')}</select>
+    <input id="m_mistake" placeholder="What was the mistake?">
+    <input id="m_why" placeholder="Why did it happen?">
+    <input id="m_correct" placeholder="Correct concept / method">
+    <input id="m_takeaway" placeholder="One-line takeaway">
+    <button class="btn" onclick="addMistake()">Add to Mistake Log</button>
+  </div>
+  <div class="addrow">
+    <select id="m_filter" style="flex:0 0 130px;padding:8px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text);" onchange="mistakeFilter=this.value;renderMistakeList()">
+      ${['All',...SUBJS].map(s=>`<option ${s===mistakeFilter?'selected':''}>${s}</option>`).join('')}
+    </select>
+    <input id="m_search" placeholder="Search..." value="${mistakeSearch}" oninput="mistakeSearch=this.value;renderMistakeList()">
+  </div>
+  <div id="mistakeList"></div>`;
+  document.getElementById('view').innerHTML = html;
+  renderMistakeList();
+}
+function renderMistakeList(){
+  const filtered = mistakeStore.filter(e=> (mistakeFilter==='All'||e.subject===mistakeFilter) &&
+    (!mistakeSearch || (e.m+e.w+e.c+e.t).toLowerCase().includes(mistakeSearch.toLowerCase())));
+  let html = `<div class="section-h">Log (${filtered.length}${filtered.length!==mistakeStore.length?' of '+mistakeStore.length:''})</div>`;
+  if(!filtered.length){ html += `<div class="empty">No mistakes match.</div>`; }
+  [...filtered].reverse().forEach(e=>{
+    html += `<div class="entrycard"><div class="top"><span class="tag" style="background:var(--${subjCode(e.subject)}bg);color:var(--${subjCode(e.subject)})">${e.subject}</span>
+      <button class="iconbtn" onclick="deleteMistake(${e.id})">✕</button></div>
+      <div class="row"><span class="lbl2">Mistake:</span> ${e.m}</div>
+      <div class="row"><span class="lbl2">Why:</span> ${e.w}</div>
+      <div class="row"><span class="lbl2">Correct:</span> ${e.c}</div>
+      <div class="row"><span class="lbl2">Takeaway:</span> ${e.t}</div></div>`;
+  });
+  const el = document.getElementById('mistakeList');
+  if(el) el.innerHTML = html;
+}
+function subjCode(s){ return {Physics:'P',Chemistry:'C',Maths:'M',Hindi:'H',English:'E','Computer Science':'S',Other:'R'}[s]||'R'; }
+function addMistake(){
+  const subject=document.getElementById('m_subj').value, m=document.getElementById('m_mistake').value.trim(),
+    w=document.getElementById('m_why').value.trim(), c=document.getElementById('m_correct').value.trim(), t=document.getElementById('m_takeaway').value.trim();
+  if(!m) return;
+  mistakeStore.push({id:Date.now(),subject,m,w,c,t,ts:todayIso()});
+  lsSet('sp_mistakes',mistakeStore); render();
+}
+function deleteMistake(id){ mistakeStore = mistakeStore.filter(e=>e.id!==id); lsSet('sp_mistakes',mistakeStore); render(); }
+
+const SCORE_SUBJS = ['Physics','Chemistry','Maths'];
+function renderScores(){
+  let html = `<div class="section-h">Log a Test Score</div>
+  <div class="form">
+    <select id="s_subj">${SCORE_SUBJS.map(s=>`<option>${s}</option>`).join('')}</select>
+    <input id="s_type" placeholder="Test type (e.g. KCET-style mock, Midterm)">
+    <input id="s_max" type="number" placeholder="Max marks">
+    <input id="s_score" type="number" placeholder="Score obtained">
+    <button class="btn" onclick="addScore()">Add Score</button>
+  </div>`;
+  SCORE_SUBJS.forEach(subj=>{
+    const entries = scoreStore.filter(e=>e.subject===subj);
+    html += `<div class="section-h">${subj}</div>`;
+    if(!entries.length){ html += `<div class="empty">No scores logged yet.</div>`; return; }
+    const w=260,h=40, max=Math.max(...entries.map(e=>e.max));
+    const pts = entries.map((e,i)=> [ (i/(Math.max(entries.length-1,1)))*w, h-(e.score/e.max)*h ]);
+    const poly = pts.map(p=>p.join(',')).join(' ');
+    const last = entries[entries.length-1], prev = entries[entries.length-2];
+    let trend = '';
+    if(prev){ const d = Math.round(last.score/last.max*100 - prev.score/prev.max*100); trend = d>0?`↑ +${d}%`:d<0?`↓ ${d}%`:'→ steady'; }
+    html += `<div class="entrycard"><svg class="spark" width="100%" height="40" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none"><polyline fill="none" stroke="var(--${subjCode(subj)})" stroke-width="2" points="${poly}"/></svg>
+      <div class="trend">${entries.map(e=>Math.round(e.score/e.max*100)+'%').join(' → ')} ${trend?(' · '+trend):''}</div></div>`;
+    [...entries].reverse().forEach(e=>{
+      html += `<div class="entrycard"><div class="top"><b>${e.type}</b><button class="iconbtn" onclick="deleteScore(${e.id})">✕</button></div>
+        <div class="row">${e.score} / ${e.max} (${Math.round(e.score/e.max*100)}%) · ${e.date}</div></div>`;
+    });
+  });
+  document.getElementById('view').innerHTML = html;
+}
+function addScore(){
+  const subject=document.getElementById('s_subj').value, type=document.getElementById('s_type').value.trim()||'Test',
+    max=parseFloat(document.getElementById('s_max').value), score=parseFloat(document.getElementById('s_score').value);
+  if(!max||isNaN(score)) return;
+  scoreStore.push({id:Date.now(),subject,type,max,score,date:todayIso()});
+  lsSet('sp_scores',scoreStore); render();
+}
+function deleteScore(id){ scoreStore = scoreStore.filter(e=>e.id!==id); lsSet('sp_scores',scoreStore); render(); }
+
+function renderChapters(){
+  let html = '';
+  ['Physics','Chemistry','Maths'].forEach(subj=>{
+    html += `<div class="section-h">${subj}</div>`;
+    CHAPTERS.filter(c=>c.sn===subj).forEach(c=>{
+      const k = c.sn+'|'+c.n;
+      const weak = !!chapterStore[k];
+      html += `<div class="chaprow">
+        <div class="cn">${c.n}<div class="st" style="background:var(--${c.s}bg);color:var(--${c.s});display:inline-block;margin-top:3px;">${c.st}</div></div>
+        <label style="display:flex;align-items:center;gap:5px;font-size:11.5px;color:var(--sub);"><input type="checkbox" ${weak?'checked':''} onchange="toggleWeak('${k.replace(/'/g,"\\'")}')">weak</label>
+      </div>`;
+    });
+  });
+  document.getElementById('view').innerHTML = html;
+}
+function toggleWeak(k){ if(chapterStore[k]) delete chapterStore[k]; else chapterStore[k]=true; lsSet('sp_chapters',chapterStore); render(); }
+
+function renderNotes(){
+  let html = `<div class="section-h">Formula / Notes Sheets</div>`;
+  ['Physics','Chemistry','Maths'].forEach(s=>{
+    html += `<div class="section-h" style="text-transform:none;color:var(--${subjCode(s)});">${s}</div>
+      <div class="form"><textarea id="note_${s}" style="min-height:110px;" placeholder="Key formulas / reactions / notes for ${s}...">${notesStore[s]||''}</textarea></div>`;
+  });
+  document.getElementById('view').innerHTML = html;
+  ['Physics','Chemistry','Maths'].forEach(s=>{
+    document.getElementById('note_'+s).addEventListener('change', e=>{ notesStore[s]=e.target.value; lsSet('sp_notes',notesStore); });
+  });
+}
+
+function weeklyRecap(){
+  const wk = WEEKS.find(([s,e])=> CURRENT>=s && CURRENT<=e) || WEEKS[WEEKS.length-1];
+  const [s,e,label] = wk;
+  let planMin=0, doneMin=0;
+  for(let di=s; di<=e; di++){ DATA[di].tk.forEach((t,ti)=>{ planMin+=t.m; if(isDone(di,ti)) doneMin+=t.m; }); }
+  const startIso = DATA[s].iso, endIso = DATA[Math.min(e,DATA.length-1)].iso;
+  const weekMistakes = mistakeStore.filter(m=> m.ts>=startIso && m.ts<=endIso);
+  const bySubj = {};
+  weekMistakes.forEach(m=> bySubj[m.subject]=(bySubj[m.subject]||0)+1);
+  const top = Object.entries(bySubj).sort((a,b)=>b[1]-a[1])[0];
+  const pct = planMin? Math.round(doneMin/planMin*100):0;
+  return `<div class="recap">📋 <b>${label} recap:</b> ${(doneMin/60).toFixed(1)}h of ${(planMin/60).toFixed(1)}h planned done (${pct}%)${top?`, most mistakes in ${top[0]} (${top[1]})`:''}.</div>`;
+}
+
+function renderProgress(){
+  let streak=0;
+  for(let i=CURRENT-1;i>=0;i--){ if((DATA[i].tk.length||((customStore[DATA[i].iso]||[]).length)) && dayComplete(i)) streak++; else break; }
+  let doneMin=0, totalMin=0, doneCount=0, totalCount=0;
+  DATA.forEach((d,di)=> d.tk.forEach((t,ti)=>{ totalMin+=t.m; totalCount++; if(isDone(di,ti)){ doneMin+=t.m; doneCount++; } }));
+  Object.values(customStore).flat().forEach(t=>{ totalMin+=30; totalCount++; if(t.done){ doneMin+=30; doneCount++; } });
+  const weakCount = Object.values(chapterStore).filter(Boolean).length;
+  let html = `<div class="statgrid">
+    <div class="stat"><div class="n">🔥 ${streak}</div><div class="l">day streak</div></div>
+    <div class="stat"><div class="n">${(doneMin/60).toFixed(1)}h</div><div class="l">hours completed</div></div>
+    <div class="stat"><div class="n">${doneCount}/${totalCount}</div><div class="l">tasks done overall</div></div>
+    <div class="stat"><div class="n">${totalCount?Math.round(doneCount/totalCount*100):0}%</div><div class="l">plan completion</div></div>
+  </div>
+  ${weakCount?`<div class="empty" style="padding:0 0 14px;text-align:left;">⚠ ${weakCount} chapter${weakCount>1?'s':''} flagged weak — see the Chapters tab.</div>`:''}
+  ${weeklyRecap()}
+  <div class="section-h">Weekly Summary</div>`;
+  WEEKS.forEach(([s,e,label])=>{
+    const cats = {};
+    for(let di=s; di<=e; di++){
+      DATA[di].tk.forEach((t,ti)=>{ cats[t.c]=cats[t.c]||{plan:0,done:0}; cats[t.c].plan+=t.m; if(isDone(di,ti)) cats[t.c].done+=t.m; });
+    }
+    let rows = '';
+    Object.keys(cats).forEach(c=>{
+      const pct = Math.round(cats[c].done/cats[c].plan*100);
+      rows += `<div class="wrow"><div class="lbl">${NAMES[c]}</div><div class="bar"><div style="width:${pct}%;background:var(--${c})"></div></div><div class="pct">${pct}%</div></div>`;
+    });
+    html += `<div class="week"><h3>${label}</h3>${rows}</div>`;
+  });
+  html += `<button class="btn ghost" onclick="exportBackup()">⬇ Export my progress (backup)</button>`;
+  document.getElementById('view').innerHTML = html;
+}
+
+let timer = null;
+function startTimer(label, minutes, mode){
+  if(timer && timer.tick) clearInterval(timer.tick);
+  timer = {label, mode:mode||'single', phase:'work', remaining: Math.max(minutes,1)*60, workMin:Math.max(minutes,1), paused:false, done:false};
+  timer.tick = setInterval(()=>{
+    if(timer.paused) return;
+    timer.remaining--;
+    if(timer.remaining<=0){
+      if(timer.mode==='pomodoro'){
+        timer.phase = timer.phase==='work' ? 'break' : 'work';
+        timer.remaining = (timer.phase==='work' ? timer.workMin : 5)*60;
+      } else { clearInterval(timer.tick); timer.done=true; }
+    }
+    renderTimer();
+  },1000);
+  renderTimer();
+}
+function renderTimer(){
+  const el = document.getElementById('timerbar');
+  if(!timer){ el.style.display='none'; return; }
+  el.style.display='flex';
+  const m = Math.floor(Math.max(timer.remaining,0)/60), s = Math.max(timer.remaining,0)%60;
+  const phaseTxt = timer.mode==='pomodoro' ? (timer.phase==='work'?'🍅 Focus':'☕ Break')+' · ' : '';
+  el.innerHTML = `<span>${timer.done? "⏰ Time's up — take a break! ("+timer.label+")" : phaseTxt+timer.label+' · '+m+':'+String(s).padStart(2,'0')}</span>
+    ${timer.done?'':`<button onclick="timer.paused=!timer.paused;renderTimer()">${timer.paused?'▶':'⏸'}</button>`}
+    <button onclick="clearInterval(timer.tick);timer=null;renderTimer()">✕</button>`;
+}
+
+async function exportBackup(){
+  const payload = {done:doneStore,custom:customStore,reflect:reflectStore,mistakes:mistakeStore,scores:scoreStore,chapters:chapterStore,exportedAt:new Date().toISOString()};
+  try{
+    const dl = await claude.use('downloads');
+    if(!dl){ alert("Export isn't available in this view."); return; }
+    await dl.save({filename:'study_plan_backup.json', data: JSON.stringify(payload,null,2)});
+  }catch(e){ /* declined or unavailable — no action needed */ }
+}
+
+function updateHeroRing(){
+  const d = DATA[CURRENT];
+  const custom = customStore[d.iso]||[];
+  const total = d.tk.length + custom.length;
+  const done = d.tk.filter((t,ti)=>isDone(CURRENT,ti)).length + custom.filter(t=>t.done).length;
+  const pct = total? Math.round(done/total*100):0;
+  const circ = 138;
+  const fg = document.getElementById('hero-ring-fg');
+  if(fg) fg.setAttribute('stroke-dashoffset', circ - (pct/100)*circ);
+  const txt = document.getElementById('hero-ring-txt');
+  if(txt) txt.textContent = pct+'%';
+}
+function render(){
+  document.querySelectorAll('.tab').forEach(el=> el.classList.toggle('active', el.dataset.tab===tab));
+  renderBanner();
+  updateHeroRing();
+  if(tab==='today') renderToday();
+  else if(tab==='backlog') renderBacklog();
+  else if(tab==='mistakes') renderMistakes();
+  else if(tab==='scores') renderScores();
+  else if(tab==='chapters') renderChapters();
+  else if(tab==='notes') renderNotes();
+  else renderProgress();
+}
+document.querySelectorAll('.tab').forEach(el=> el.addEventListener('click', ()=>{ tab=el.dataset.tab; render(); }));
+render();
+</script>
+</body>
+</html>
